@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Upload</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">Upload an Image</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <input type="file" name="file" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
+    <h2 class="mt-5">Uploaded Images</h2>
+    <div class="row">
+        {% for image in images %}
+            <div class="col-md-3">
+                <div class="card mb-4 shadow-sm">
+                    <img src="{{ url_for('main.uploaded_file', filename=image.filename) }}" class="card-img-top" alt="{{ image.filename }}">
+                    <div class="card-body">
+                        <p class="card-text">{{ image.filename }}</p>
+                        <form method="POST" action="{{ url_for('main.filter') }}">
+                            <input type="hidden" name="file_id" value="{{ image.id }}">
+                            <div class="form-group">
+                                <select name="filter_type" class="form-control">
+                                    <option value="gaussian">Gaussian Blur</option>
+                                    <option value="median">Median Filter</option>
+                                    <option value="bilateral">Bilateral Filter</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('main.edge_detection') }}">
+                            <input type="hidden" name="file_id" value="{{ image.id }}">
+                            <div class="form-group">
+                                <select name="edge_type" class="form-control">
+                                    <option value="canny">Canny Edge Detection</option>
+                                    <option value="sobel">Sobel Edge Detection</option>
+                                    <option value="laplacian">Laplacian Edge Detection</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Apply Edge Detection</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('main.transform') }}">
+                            <input type="hidden" name="file_id" value="{{ image.id }}">
+                            <div class="form-group">
+                                <select name="transform_type" class="form-control">
+                                    <option value="rotate">Rotate</option>
+                                    <option value="scale">Scale</option>
+                                    <option value="flip">Flip</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Apply Transformation</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% if processed_filename %}
+        <h2 class="mt-5">Processed Image</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    <img src="{{ url_for('main.uploaded_file', filename=processed_filename) }}" class="card-img-top" alt="Processed Image">
+                    <div class="card-body">
+                        <p class="card-text">{{ processed_filename }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+</body>
+</html>
